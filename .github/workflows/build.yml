@@ -27,9 +27,10 @@ jobs:
       - name: Get Commit ID for Tag
         id: get_commit_id
         run: |
-          COMMIT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${{ github.ref }}" \
-          | jq -r .object.sha)
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${{ github.ref }}")
+          echo "$RESPONSE"
+          COMMIT_ID=$(echo $RESPONSE | jq -r .object.sha)
           echo "COMMIT_ID=$COMMIT_ID" >> $GITHUB_ENV
 
       - name: Create Release
