@@ -24,23 +24,27 @@ jobs:
 
       - name: Build PlatformIO Project
         run: pio run
-      - name: Create Draft Release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: true
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get Commit ID for Tag
+        id: get_commit_id
+        run: |
+          COMMIT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${{ github.ref }}" \
+          | jq -r .object.sha)
+          echo "COMMIT_ID=$COMMIT_ID" >> $GITHUB_ENV
 
+      - name: Create Release
+        id: create_release
+        run: |
+          JSON=$(curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          --data '{"tag_name": "${{ github.ref }}", "target_commitish": "${{ env.COMMIT_ID }}", "name": "Release ${{ github.ref }}", "body": "Release notes for ${{ github.ref }}", "draft": false, "prerelease": false}' \
+          "https://api.github.com/repos/${{ github.repository }}/releases")
+          UPLOAD_URL=$(echo $JSON | jq -r .upload_url | sed 's/{?name,label}//')
+          echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: .pio/build/nodemcu-32s/firmware.bin
-          asset_name: firmware.bin
-          asset_content_type: application/octet-stream
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/octet-stream" \
+          --data-binary @.pio/build/nodemcu-32s/firmware.bin \
+          "${{ env.UPLOAD_URL }}?name=firmware.bin"
+  
