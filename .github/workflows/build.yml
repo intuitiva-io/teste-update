@@ -47,4 +47,3 @@ jobs:
           -H "Content-Type: application/octet-stream" \
           --data-binary @.pio/build/nodemcu-32s/firmware.bin \
           "${{ env.UPLOAD_URL }}?name=firmware.bin"
-  
