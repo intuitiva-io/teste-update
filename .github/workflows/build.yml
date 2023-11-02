@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v3
+
       - uses: actions/cache@v3
         with:
           path: |
@@ -26,7 +28,10 @@ jobs:
 
       - name: Build PlatformIO Project
         run: pio run
-
+      
+      - uses: actions/checkout@v3
+        path: .pio/build
+        
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
