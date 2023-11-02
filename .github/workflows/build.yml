@@ -30,8 +30,9 @@ jobs:
         run: pio run
       
       - uses: actions/checkout@v3
-        path: .pio/build
-        
+        with:  
+          path: .pio/build
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
