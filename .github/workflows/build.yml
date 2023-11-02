@@ -28,11 +28,24 @@ jobs:
 
       - name: Build PlatformIO Project
         run: pio run
-      
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: firmware
+          path: .pio/build/nodemcu-32s/firmware.bin
       - uses: actions/checkout@v3
         with:  
           path: .pio/build
-
+  deloy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: firmware
+          path: .pio/build/nodemcu-32s/firmware.bin
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
