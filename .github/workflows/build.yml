@@ -8,43 +8,44 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/cache@v3
         with:
           path: |
             ~/.cache/pip
             ~/.platformio/.cache
           key: ${{ runner.os }}-pio
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
+
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
       - name: Build PlatformIO Project
         run: pio run
-      - name: Get Commit ID for Tag
-        id: get_commit_id
-        run: |
-          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${{ github.ref }}")
-          echo "$RESPONSE"
-          COMMIT_ID=$(echo $RESPONSE | jq -r .object.sha)
-          echo "COMMIT_ID=$COMMIT_ID" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
-        run: |
-          JSON=$(curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/json" \
-          --data '{"tag_name": "${{ github.ref }}", "target_commitish": "${{ env.COMMIT_ID }}", "name": "Release ${{ github.ref }}", "body": "Release notes for ${{ github.ref }}", "draft": false, "prerelease": false}' \
-          "https://api.github.com/repos/${{ github.repository }}/releases")
-          UPLOAD_URL=$(echo $JSON | jq -r .upload_url | sed 's/{?name,label}//')
-          echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload Release Asset
-        run: |
-          curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/octet-stream" \
-          --data-binary @.pio/build/nodemcu-32s/firmware.bin \
-          "${{ env.UPLOAD_URL }}?name=firmware.bin"
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: .pio/build/nodemcu-32s/firmware.bin
+          asset_name: firmware.bin
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
