@@ -1,44 +1,19 @@
-name: PlatformIO CI
+name: Releases
 
-on:
+on: 
   push:
     tags:
-      - '*'
+    - '*'
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pip
-            ~/.platformio/.cache
-          key: ${{ runner.os }}-pio
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install PlatformIO Core
-        run: pip install --upgrade platformio
-
-      - name: Build PlatformIO Project
-        run: pio run
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            .pio/build/*/firmware.bin
-            .pio/build/*/firmware.elf
-          tag_name: ${{ github.ref }}
-          body: |
-            "See changelog for details."
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    - uses: actions/checkout@v3
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "README.md,platformio.ini"
+        bodyFile: "body.md"
