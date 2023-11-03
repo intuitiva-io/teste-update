@@ -12,8 +12,9 @@ jobs:
     permissions:
       contents: write
     steps:
-    - uses: actions/checkout@v3
+    - name: creat
+      run: echo "teste" > README.md
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "README.md,platformio.ini"
+        artifacts: "README.md"
         body: "body.md"
