@@ -40,8 +40,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: Checkout repository
-
       - name: Get latest tag
         id: latest_tag
         run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
