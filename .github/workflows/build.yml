@@ -69,7 +69,8 @@ jobs:
 
       - name: list files
         run: ls -R
-
+      - name: echo tag
+        run: echo ${{ steps.latest_tag.outputs.tag }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
