@@ -16,4 +16,4 @@ jobs:
     - uses: ncipollo/release-action@v1
       with:
         artifacts: "README.md,platformio.ini"
-        bodyFile: "body.md"
+        body: "body.md"
