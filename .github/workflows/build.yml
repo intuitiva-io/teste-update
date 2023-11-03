@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Get latest tag
         id: latest_tag
         run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
@@ -79,7 +80,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           owner: intuitiva-io
-          repo: teste-update-release
+          repo: teste-update-releases
           tag_name: ${{ steps.latest_tag.outputs.tag }}
           release_name: Release ${{ steps.latest_tag.outputs.tag }}
           commitish: main
