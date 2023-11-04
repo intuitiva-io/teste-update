@@ -55,12 +55,15 @@ jobs:
         run: |
           git tag ${{ steps.latest_tag.outputs.tag }}
           git push origin ${{ steps.latest_tag.outputs.tag }}
-
+          
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
           name: firmware
           path: .pio/build/nodemcu-32s/firmware.bin
+            
+      - name: ls
+        run: ls .
 
       - name: Create Release
         id: create_release
