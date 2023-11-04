@@ -1,20 +1,92 @@
-name: Releases
+name: PlatformIO CI
 
-on: 
+on:
   push:
     tags:
-    - '*'
+      - '*'
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-    - name: creat
-      run: echo "teste" > README.md
-    - uses: ncipollo/release-action@v1
-      with:
-        artifacts: "README.md"
-        body: "body.md"
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Build PlatformIO Project
+        run: pio run
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: firmware
+          path: .pio/build/nodemcu-32s/firmware.bin
+
+  release-electron:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get latest tag
+        id: latest_tag
+        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+
+      - name: Checkout repository release
+        uses: actions/checkout@v3
+        with:
+          repository: "intuitiva-io/teste-update-releases"
+          token: ${{ secrets.GH_TOKEN }}
+          ref: main
+
+      - name: create tag
+        run: |
+          git tag ${{ steps.latest_tag.outputs.tag }}
+          git push origin ${{ steps.latest_tag.outputs.tag }}
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: firmware
+          path: .pio/build/nodemcu-32s/firmware.bin
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          owner: intuitiva-io
+          repo: teste-update-releases
+          tag_name: ${{ steps.latest_tag.outputs.tag }}
+          release_name: Release ${{ steps.latest_tag.outputs.tag }}
+          commitish: main
+          body: |
+            Release ${{ steps.latest_tag.outputs.tag }}
+
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset-linux
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url}}
+          asset_path: .pio/build/nodemcu-32s/firmware.bin
+          asset_name: firmware.bin
+          asset_content_type: application/octet-stream
+
