@@ -62,18 +62,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: firmware
-          
-      - name: Check if file exists and read content
-        id: file_check
-        run: |
-          if [[ -f "bodyRelease.md" ]]; then
-            body_content=$(jq -Rs . bodyRelease.md)
-            echo "body=$body_content" >> $GITHUB_ENV
-          else
-            echo "body='Release ${{ env.tag }}'" >> $GITHUB_ENV
-          fi
-        shell: bash
-
 
       - name: Create Release
         id: create_release
@@ -86,11 +74,8 @@ jobs:
           tag_name: ${{ env.tag }}
           release_name: Release ${{ env.tag }}
           commitish: main
-          body: |
-            # Release ${{ env.tag }}
-            ${{ env.body }}
-          draft: false
-          prerelease: false
+          body_path: bodyRelease.md
+          body: teste
 
       - name: Upload Release Asset
         id: upload-release-asset-linux
