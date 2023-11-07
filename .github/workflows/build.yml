@@ -43,9 +43,6 @@ jobs:
       - name: Get latest tag
         id: latest_tag
         run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-      
-      - name: Use the latest tag
-        run: echo "The latest tag is ${{ env.tag }}"
 
       - name: Checkout repository release
         uses: actions/checkout@v3
@@ -56,14 +53,14 @@ jobs:
 
       - name: create tag
         run: |
-          git tag ${{ steps.latest_tag.outputs.tag }}
-          git push origin ${{ steps.latest_tag.outputs.tag }}
+          git tag ${{ env.tag }}
+          git push origin ${{ env.tag }}
           
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
           name: firmware
-          path: .pio/build/nodemcu-32s/firmware.bin
+          # path: .pio/build/nodemcu-32s/firmware.bin
 
       - name: ls
         run: ls .
@@ -76,7 +73,7 @@ jobs:
         with:
           owner: intuitiva-io
           repo: teste-update-releases
-          tag_name: ${{ steps.latest_tag.outputs.tag }}
+          tag_name: ${{ env.tag }}
           release_name: Release ${{ steps.latest_tag.outputs.tag }}
           commitish: main
           body: |
