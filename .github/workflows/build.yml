@@ -62,6 +62,9 @@ jobs:
           name: firmware
           path: .pio/build/nodemcu-32s/firmware.bin
             
+      - name: show repo name
+        run: echo ${{ github.repository }}releases
+        
       - name: ls
         run: ls .
 
