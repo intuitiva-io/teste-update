@@ -67,9 +67,9 @@ jobs:
         id: file_check
         run: |
           if [[ -f "bodyRelease.md" ]]; then
-            echo "aaaaaaaaaaaaaaaaaaa" >> $GITHUB_ENV
+            echo "body=aaaaaaaaaaaaaaaaaaa" >> $GITHUB_ENV
           else
-            echo "bbbbbbbbbbbbbbbbbb" >> $GITHUB_ENV
+            echo "body=bbbbbbbbbbbbbbbbbb" >> $GITHUB_ENV
           fi
         shell: bash
 
