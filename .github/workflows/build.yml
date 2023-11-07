@@ -62,6 +62,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: firmware
+
       - name: ls
         run: ls -la
 
@@ -91,7 +92,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url}}
-          asset_path: firmware.bin
+          asset_path: .pio/build/nodemcu-32s/firmware.bin
           asset_name: firmware.bin
           asset_content_type: application/octet-stream
 
