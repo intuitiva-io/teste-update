@@ -42,12 +42,15 @@ jobs:
 
       - name: Get latest tag
         id: latest_tag
-        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+        run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+      
+      - name: Use the latest tag
+        run: echo "The latest tag is ${{ env.tag }}"
 
       - name: Checkout repository release
         uses: actions/checkout@v3
         with:
-          repository: "intuitiva-io/teste-update-releases"
+          repository: ${{ github.repository }}-releases
           token: ${{ secrets.GH_TOKEN }}
           ref: main
 
@@ -61,10 +64,7 @@ jobs:
         with:
           name: firmware
           path: .pio/build/nodemcu-32s/firmware.bin
-            
-      - name: show repo name
-        run: echo ${{ github.repository }}releases
-        
+
       - name: ls
         run: ls .
 
