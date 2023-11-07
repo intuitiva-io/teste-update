@@ -67,11 +67,13 @@ jobs:
         id: file_check
         run: |
           if [[ -f "bodyRelease.md" ]]; then
-            echo "body=$(cat bodyRelease.md)" >> $GITHUB_ENV
+            body_content=$(cat bodyRelease.md)
+            echo "body='$body_content'" >> $GITHUB_ENV
           else
-            echo "body=Release ${{ env.tag }}" >> $GITHUB_ENV
+            echo "body='Release ${{ env.tag }}'" >> $GITHUB_ENV
           fi
         shell: bash
+  
 
       - name: Create Release
         id: create_release
