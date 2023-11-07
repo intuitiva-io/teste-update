@@ -67,9 +67,9 @@ jobs:
         id: file_check
         run: |
           if [[ -f "bodyRelease.md" ]]; then
-            echo "body=aaaaaaaaaaaaaaaaaaa" >> $GITHUB_ENV
+            echo "body=$(cat bodyRelease.md)" >> $GITHUB_ENV
           else
-            echo "body=bbbbbbbbbbbbbbbbbb" >> $GITHUB_ENV
+            echo "body=Release ${{ env.tag }}" >> $GITHUB_ENV
           fi
         shell: bash
 
@@ -100,4 +100,3 @@ jobs:
           asset_path: .pio/build/nodemcu-32s/firmware.bin
           asset_name: firmware.bin
           asset_content_type: application/octet-stream
-
