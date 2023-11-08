@@ -74,7 +74,7 @@ jobs:
         uses: actions/download-artifact@v3
 
       - name: ls
-        run: ls -la bodyRelease.md
+        run: ls -la
       
       - name: check file
         run: |
