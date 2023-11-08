@@ -72,9 +72,9 @@ jobs:
           
       - name: Download all artifacts
         uses: actions/download-artifact@v3
-      
-      - name: show tag
-        run: echo ------ ${{ env.tag }} -----
+    
+      - name: get repo
+        run: echo "repo=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
@@ -83,7 +83,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           owner: intuitiva-io
-          repo: ${{ github.repository }}-releases
+          repo: ${{ env.repo }}-releases
           tag_name: ${{ env.tag }}
           release_name: Release ${{ env.tag }}
           commitish: main
