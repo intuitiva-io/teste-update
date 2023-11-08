@@ -73,23 +73,6 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v3
 
-      - name: ls
-        run: ls -la artifact
-      
-      - name: check file
-        run: |
-          file artifact/bodyRelease.md
-          file artifact/firmware.bin
-
-      - name: Check if bodyRelease.md exists
-        id: check_file
-        run: |
-          if [[ -f "bodyRelease.md" ]]; then
-            echo "::set-output name=exists::true"
-          else
-            echo "::set-output name=exists::false"
-          fi
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
