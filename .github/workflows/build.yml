@@ -87,3 +87,5 @@ jobs:
           asset_path: .pio/build/nodemcu-32s/firmware.bin
           asset_name: firmware.bin
           asset_content_type: application/octet-stream
+
+          
