@@ -104,3 +104,5 @@ jobs:
           asset_path: artifact/firmware.bin
           asset_name: firmware.bin
           asset_content_type: application/octet-stream
+
+          
