@@ -98,7 +98,7 @@ jobs:
           tag_name: ${{ env.tag }}
           release_name: Release ${{ env.tag }}
           commitish: main
-          body_path: bodyRelease.md
+          # body_path: bodyRelease.md
           body: teste
 
       - name: Upload Release Asset
