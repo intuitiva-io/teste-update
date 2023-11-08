@@ -42,7 +42,7 @@ jobs:
         if: steps.check_file.outputs.exists == 'true'
         with:
           name: bodyRelease.md
-          path: bodyRelease.md
+          path: ./bodyRelease.md
           
       - name: Upload build artifact firmware.bin
         uses: actions/upload-artifact@v2
