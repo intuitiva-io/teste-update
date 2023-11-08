@@ -77,6 +77,11 @@ jobs:
 
       - name: ls
         run: ls -la bodyRelease.md
+      
+      - name: check file
+        run: file bodyRelease.md
+
+        
 
       - name: Check if bodyRelease.md exists
         id: check_file
@@ -88,7 +93,7 @@ jobs:
           fi
       
           
-          
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
