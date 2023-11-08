@@ -76,7 +76,7 @@ jobs:
         uses: actions/download-artifact@v3
 
       - name: ls
-        run: ls -la
+        run: ls -la bodyRelease.md
 
       - name: Check if bodyRelease.md exists
         id: check_file
