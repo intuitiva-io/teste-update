@@ -28,13 +28,27 @@ jobs:
       - name: Build PlatformIO Project
         run: pio run
 
-      - name: Upload build artifact
+      - name: Check if bodyRelease.md exists
+        id: check_file
+        run: |
+          if [[ -f "bodyRelease.md" ]]; then
+            echo "::set-output name=exists::true"
+          else
+            echo "::set-output name=exists::false"
+          fi
+
+      - name: Upload build artifact firmware.bin
+        uses: actions/upload-artifact@v2
+        if: steps.check_file.outputs.exists == 'true'
+        with:
+          name: bodyRelease.md
+          path: bodyRelease.md
+          
+      - name: Upload build artifact firmware.bin
         uses: actions/upload-artifact@v2
         with:
-          name: firmware
-          path: |
-            .pio/build/nodemcu-32s/firmware.bin
-            bodyRelease.md
+          name: firmware.bin
+          path: .pio/build/nodemcu-32s/firmware.bin
 
   release:
     needs: build
@@ -58,11 +72,18 @@ jobs:
           git tag ${{ env.tag }}
           git push origin ${{ env.tag }}
           
-      - name: Download artifacts
+      - name: Download all artifacts
         uses: actions/download-artifact@v3
-        with:
-          name: firmware
-
+      
+      - name: Check if bodyRelease.md exists
+        id: check_file
+        run: |
+          if [[ -f "bodyRelease.md" ]]; then
+            echo "::set-output name=exists::true"
+          else
+            echo "::set-output name=exists::false"
+          fi
+      
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
