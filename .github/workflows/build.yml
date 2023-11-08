@@ -41,13 +41,11 @@ jobs:
         uses: actions/upload-artifact@v2
         if: steps.check_file.outputs.exists == 'true'
         with:
-          name: bodyRelease.md
-          path: ./bodyRelease.md
+          path: bodyRelease.md
           
       - name: Upload build artifact firmware.bin
         uses: actions/upload-artifact@v2
         with:
-          name: firmware.bin
           path: .pio/build/nodemcu-32s/firmware.bin
 
   release:
