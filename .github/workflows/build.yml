@@ -79,9 +79,9 @@ jobs:
         run: ls -la bodyRelease.md
       
       - name: check file
-        run: file bodyRelease.md
-
-        
+        run: |
+          file bodyRelease.md
+          file firmware.bin
 
       - name: Check if bodyRelease.md exists
         id: check_file
