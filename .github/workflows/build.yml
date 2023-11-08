@@ -72,6 +72,9 @@ jobs:
           
       - name: Download all artifacts
         uses: actions/download-artifact@v3
+      
+      - name: show tag
+        run: echo ------ ${{ env.tag }} -----
 
       - name: Create Release
         id: create_release
